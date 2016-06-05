@@ -1,0 +1,17 @@
+{% include 'header.html.jinja' %}
+<h1>Live System Status</h1>
+<hr />
+<table id="components"></table>
+<script>
+$(function() {
+    $.get('/api/v1/components', function(data) {
+        $.each(data.components, function(index, component) {
+            var $row = $('<tr>');
+            $row.append($('<td>').text(component.label));
+            $row.append($('<td class="status right">').text(component.status));
+            $('#components').append($row);
+        })
+    });
+});
+</script>
+{% include 'footer.html.jinja' %}
