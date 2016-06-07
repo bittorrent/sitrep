@@ -4,7 +4,7 @@
 Vagrant.configure(2) do |config|
     config.vm.box = "ubuntu/trusty64"
     config.vm.network "private_network", ip: "192.168.74.100"
-    config.vm.hostname = "live-status.local"
+    config.vm.hostname = "status.btlive.local"
 
     config.vm.provider "virtualbox" do |v|
         v.memory = 1024

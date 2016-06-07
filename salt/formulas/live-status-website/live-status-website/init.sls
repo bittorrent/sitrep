@@ -43,6 +43,7 @@ gunicorn:
         - template: jinja
         - context:
             root: {{ root|yaml_encode }}
+            dev_environment: {{ dev_environment|yaml_encode }}
 
 service live-status-website restart:
     cmd.run

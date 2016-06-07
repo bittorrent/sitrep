@@ -8,4 +8,4 @@ setuid live-status
 setgid live-status
 chdir {{ root }}
 
-exec /opt/live-status-website/bin/gunicorn app.wsgi --env LIVE_STATUS_SETTINGS=/opt/live-status-website/settings.json
+exec /opt/live-status-website/bin/gunicorn app.wsgi {{ '--log-level=debug' if dev_environment else '' }} --env LIVE_STATUS_SETTINGS=/opt/live-status-website/settings.json --workers=8
