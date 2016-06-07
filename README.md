@@ -1,4 +1,4 @@
-live-status
+live-status-website [![Build Status](https://travis-ci.com/bittorrent/live-status-website.svg?token=qNZpQ37RsPih5TkYecTG&branch=master)](https://travis-ci.com/bittorrent/live-status-website)
 ==
 
 This server provides status reports.

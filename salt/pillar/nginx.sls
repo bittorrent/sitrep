@@ -1,4 +1,4 @@
-{% set root = salt['pillar.get']('live-status:root') -%}
+{% set root = salt['pillar.get']('live-status-website:root') -%}
 nginx:
     ng:
         install_from_ppa: True
@@ -10,7 +10,7 @@ nginx:
         server:
             config:
                 http:
-                    sendfile: {{ ('off' if salt['pillar.get']('live-status:dev_environment', False) else 'on')|yaml_encode }}
+                    sendfile: {{ ('off' if salt['pillar.get']('live-status-website:dev_environment', False) else 'on')|yaml_encode }}
 
         vhosts:
             managed:

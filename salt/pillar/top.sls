@@ -1,4 +1,4 @@
 base:
     '*':
-        - live-status
+        - live-status-website
         - nginx

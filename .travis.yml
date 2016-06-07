@@ -6,4 +6,4 @@ install:
     - sudo chown -R $USER .
     - sudo chgrp -R live-status ~ .
 script:
-    /opt/live-status/bin/nosetests
+    /opt/live-status-website/bin/nosetests

@@ -2,12 +2,12 @@ import json
 
 from flask_testing import TestCase
 
-from app.application import create_app
+from app.application import Application
 
 
 class ApplicationTest(TestCase):
     def create_app(self):
-        app = create_app({
+        app = Application.create({
             'database': 'sqlite://',
             'api_token': 'test-token',
         })

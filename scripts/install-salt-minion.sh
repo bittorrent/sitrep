@@ -13,7 +13,7 @@ file_client: local
 file_roots:
     base:
         - $ROOT/salt/state
-        - $ROOT/salt/formulas/live-status
+        - $ROOT/salt/formulas/live-status-website
         - $ROOT/salt/formulas/nginx
 
 pillar_roots:
