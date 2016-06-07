@@ -1,0 +1,9 @@
+language: generic
+sudo: required
+dist: trusty
+install:
+    - sudo ./scripts/install-dev-environment.sh
+    - sudo chown -R $USER .
+    - sudo chgrp -R live-status ~ .
+script:
+    /opt/live-status/bin/nosetests

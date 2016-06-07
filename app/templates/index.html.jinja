@@ -5,7 +5,7 @@
 <script>
 $(function() {
     $.get('/api/v1/components', function(data) {
-        $.each(data.components, function(index, component) {
+        $.each(data.components, function(id, component) {
             var $row = $('<tr>');
             $row.append($('<td>').text(component.label));
             $row.append($('<td class="status right">').text(component.status));

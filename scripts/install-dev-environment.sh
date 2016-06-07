@@ -25,8 +25,7 @@ live-status:
     dev_environment: True
     settings:
         api_token: yMhyfJoNI2fTyp3rStK1A0B6u8ZhMJUJ60M3y0qB
-        database:
-            name: live_status
+        database: mysql://root@127.0.0.1/live_status
 PillarData
 
 salt-call --local state.highstate

@@ -8,4 +8,4 @@ setuid live-status
 setgid live-status
 chdir {{ root }}
 
-exec /opt/live-status/bin/gunicorn app.application --env LIVE_STATUS_SETTINGS=/opt/live-status/settings.json
+exec /opt/live-status/bin/gunicorn app.application:create_app --env LIVE_STATUS_SETTINGS=/opt/live-status/settings.json

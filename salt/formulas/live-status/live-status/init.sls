@@ -1,6 +1,7 @@
 {% set server = pillar.get('live-status', {}) -%}
 {% set root = server.get('root', None) -%}
 {% set settings = server.get('settings', {}) -%}
+{% set dev_environment = server.get('dev_environment', False) -%}
 
 live-status:
     user.present:
@@ -21,7 +22,7 @@ virtualenv:
 /opt/live-status:
     virtualenv.managed:
         - system_site_packages: False
-        - requirements: {{ root }}/requirements.txt
+        - requirements: {{ root }}/requirements{{ '-dev' if dev_environment else '' }}.txt
 
 /opt/live-status/settings.json:
     file.serialize:
