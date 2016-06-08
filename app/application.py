@@ -38,8 +38,15 @@ class Application(flask.Flask):
         def wrapper(*args, **kwds):
             token = flask.request.headers.get('X-Live-Status-API-Token')
             if token != self.settings['api_token']:
-                return flask.jsonify({}), 403
-            return f(*args, **kwds)
+                resp = flask.make_response(flask.jsonify({}), 403)
+            else:
+                resp = f(*args, **kwds)
+                if not isinstance(resp, flask.Response):
+                    resp = flask.make_response(resp)
+            resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+            resp.headers['Pragma'] = 'no-cache'
+            resp.headers['Expires'] = '0'
+            return resp
         return wrapper
 
     @staticmethod
