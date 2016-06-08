@@ -93,27 +93,32 @@ class Application(flask.Flask):
                     'status': update.status,
                     'status_description': update.status_description,
                     'health': update.health,
-                    'tags': [tag.strip() for tag in update.tags.split(',')]
+                    'tags': json.loads(update.tags)
                 } for update in updates}
             })
 
         @application.route('/api/v1/components/<component>/updates', methods=['POST'])
         @application.require_api_token
         def put_component(component):
+            data = flask.request.get_json()
+            if not isinstance(data, dict):
+                return 'invalid request', 400
             table = db.ComponentUpdate
             update = table()
             update.component = component
-            update.label = flask.request.form['label']
-            update.status = flask.request.form['status']
-            if 'status_description' in flask.request.form:
-                update.status_description = flask.request.form['status_description']
-            update.health = int(flask.request.form['health'])
+            update.label = data['label']
+            update.status = data['status']
+            if 'status_description' in data:
+                update.status_description = data['status_description']
+            update.health = int(data['health'])
             if update.health < 0 or update.health > 100:
                 return 'health must be between 0 and 100', 400
             update.time = time.time()
-            if 'tags' in flask.request.form:
-                update.tags = flask.request.form['tags']
-            update.lifetime = int(flask.request.form['lifetime']) if 'lifetime' in flask.request.form else (5 * 60)
+            if 'tags' in data:
+                if not isinstance(data['tags'], dict):
+                    return 'tags must be dictionary', 400
+                update.tags = json.dumps(data['tags'])
+            update.lifetime = int(data['lifetime']) if 'lifetime' in data else (5 * 60)
             if update.lifetime < 5 or update.lifetime > 24 * 60 * 60:
                 return 'lifetime must be between 5 seconds and 24 hours', 400
             db.session.add(update)

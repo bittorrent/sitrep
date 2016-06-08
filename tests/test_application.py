@@ -28,13 +28,13 @@ class ApplicationTest(TestCase):
     def test_component_update(self):
         response = self.client.post('/api/v1/components/test/updates', headers={
             'X-Live-Status-API-Token': 'test-token'
-        }, data={
+        }, data=json.dumps({
             'label': 'test component',
             'health': 60,
             'status': 'unstable',
             'status_description': 'this is a test',
-            'tags': 'test',
-        })
+            'tags': {'test': 1},
+        }), content_type='application/json')
         self.assert_200(response)
 
         response = self.client.get('/api/v1/components')
@@ -48,17 +48,17 @@ class ApplicationTest(TestCase):
         self.assertEqual(component['health'], 60)
         self.assertEqual(component['status'], 'unstable')
         self.assertEqual(component['status_description'], 'this is a test')
-        self.assertEqual(component['tags'], ['test'])
+        self.assertEqual(component['tags'], {'test': 1})
 
         response = self.client.post('/api/v1/components/test/updates', headers={
             'X-Live-Status-API-Token': 'test-token'
-        }, data={
+        }, data=json.dumps({
             'label': 'test component',
             'health': 100,
             'status': 'stable',
             'status_description': 'this is a test',
-            'tags': 'test',
-        })
+            'tags': {'test': 1},
+        }), content_type='application/json')
         self.assert_200(response)
 
         response = self.client.get('/api/v1/components')
