@@ -82,7 +82,7 @@ class Application(flask.Flask):
             return flask.render_template('api.html.jinja')
 
         @application.route('/api/v1/components')
-        @application.cache(seconds=30)
+        @application.cache(seconds=15)
         def components():
             table = db.ComponentUpdate
             max_ids = db.session.query(sqlalchemy.sql.func.max(table.id)).group_by(table.component)
