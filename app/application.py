@@ -93,7 +93,7 @@ class Application(flask.Flask):
                     'status': update.status,
                     'status_description': update.status_description,
                     'health': update.health,
-                    'tags': json.loads(update.tags)
+                    'tags': json.loads(update.tags) if update.tags else {}
                 } for update in updates}
             })
 
