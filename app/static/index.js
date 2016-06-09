@@ -1,6 +1,4 @@
-// jshint esversion:6
-
-function colorForHealth(health, saturation = 1.0, brightness = 0.5) {
+function colorForHealth(health, saturation, brightness) {
     return 'hsl(' + Math.round(health / 100 * 120) + ', ' + Math.round(saturation * 100) + '%, ' + Math.round(brightness * 100) + '%)';
 }
 
