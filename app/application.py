@@ -85,16 +85,29 @@ class Application(flask.Flask):
         @application.cache(seconds=15)
         def components():
             table = db.ComponentUpdate
-            max_ids = db.session.query(sqlalchemy.sql.func.max(table.id)).group_by(table.component)
-            updates = db.session.query(table).filter(table.id.in_(max_ids)).filter(table.time + table.lifetime >= time.time()).all()
+            updates = db.session.query(table).filter(table.time + table.lifetime >= time.time() - 24 * 60 * 60).order_by(table.id.desc()).all()
+            updates_by_component = {}
+            for update in updates:
+                if update.component not in updates_by_component:
+                    updates_by_component[update.component] = []
+                updates_by_component[update.component].append(update)
             return flask.jsonify({
-                'components': {update.component: {
-                    'label': update.label,
-                    'status': update.status,
-                    'status_description': update.status_description,
-                    'health': update.health,
-                    'tags': json.loads(update.tags) if update.tags else {}
-                } for update in updates}
+                'components': {component: {
+                    'label': component_updates[0].label,
+                    'status': component_updates[0].status if component_updates[0].time + component_updates[0].lifetime >= time.time() else 'out of service',
+                    'status_description': component_updates[0].status_description if component_updates[0].time + component_updates[0].lifetime >= time.time() else None,
+                    'health': component_updates[0].health if component_updates[0].time + component_updates[0].lifetime >= time.time() else 0,
+                    'tags': json.loads(component_updates[0].tags) if component_updates[0].tags else {},
+                    'update_history': [{
+                        'time': update.time,
+                        'label': update.label,
+                        'status': update.status,
+                        'status_description': update.status_description,
+                        'health': update.health,
+                        'tags': json.loads(update.tags) if update.tags else {},
+                        'lifetime': update.lifetime
+                    } for update in component_updates]
+                } for component, component_updates in updates_by_component.items()}
             })
 
         @application.route('/api/v1/components/<component>/updates', methods=['POST'])
