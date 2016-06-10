@@ -86,7 +86,7 @@ class Application(flask.Flask):
         @application.cache(seconds=15)
         def components():
             table = db.ComponentUpdate
-            updates = db.session.query(table).filter(table.time + table.lifetime >= time.time() - 24 * 60 * 60).order_by(table.id.desc()).all()
+            updates = db.session.query(table).filter(table.time + table.lifetime >= time.time() - 12 * 60 * 60).order_by(table.id.desc()).all()
 
             updates_by_component = {}
             for update in updates:

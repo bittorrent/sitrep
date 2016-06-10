@@ -25,7 +25,7 @@ $(function() {
 
             var $history = $('<div class="update-history">');
             var t = now;
-            var historyScale = 24 * 60 * 60;
+            var historyScale = 12 * 60 * 60;
             var uptime = 0;
             $.each(component.update_history, function(i, update) {
                 var time = new Date(update.time).getTime() / 1000;
@@ -52,7 +52,7 @@ $(function() {
             });
             $row.append($history);
 
-            $header.append($('<span class="uptime">').text('24H: ' + (uptime / historyScale) * 100 + '%'));
+            $header.append($('<span class="uptime">').text('12H: ' + (uptime / historyScale) * 100 + '%'));
 
             $group.find('.components').append($row);
         });
