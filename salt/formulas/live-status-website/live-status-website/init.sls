@@ -7,6 +7,9 @@ live-status:
     user.present:
         - createhome: False
 
+ntp:
+    pkg.installed
+
 python-pip:
     pkg.installed
 

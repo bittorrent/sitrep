@@ -45,7 +45,7 @@ $(function() {
                 $update.css('background-color', colorForHealth(update.health, 0.5, 0.8));
                 $update.css('width', width + '%');
                 $update.css('z-index', 100 - update.health);
-                $history.append($update);
+                $history.prepend($update);
 
                 uptime += update.health / 100 * (end - start);
                 t = time;
