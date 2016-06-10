@@ -1,3 +1,4 @@
+import datetime
 import flask
 import hashlib
 import json
@@ -86,11 +87,16 @@ class Application(flask.Flask):
         def components():
             table = db.ComponentUpdate
             updates = db.session.query(table).filter(table.time + table.lifetime >= time.time() - 24 * 60 * 60).order_by(table.id.desc()).all()
+
             updates_by_component = {}
             for update in updates:
                 if update.component not in updates_by_component:
                     updates_by_component[update.component] = []
+                else:
+                    if updates_by_component[update.component][-1].roll_up(update):
+                        continue
                 updates_by_component[update.component].append(update)
+
             return flask.jsonify({
                 'components': {component: {
                     'label': component_updates[0].label,
@@ -99,7 +105,7 @@ class Application(flask.Flask):
                     'health': component_updates[0].health if component_updates[0].time + component_updates[0].lifetime >= time.time() else 0,
                     'tags': json.loads(component_updates[0].tags) if component_updates[0].tags else {},
                     'update_history': [{
-                        'time': update.time,
+                        'time': datetime.datetime.utcfromtimestamp(update.time).strftime('%Y-%m-%dT%H:%M:%S.{:03}Z'.format(datetime.datetime.utcfromtimestamp(update.time).microsecond / 1000)),
                         'label': update.label,
                         'status': update.status,
                         'status_description': update.status_description,
@@ -112,7 +118,7 @@ class Application(flask.Flask):
 
         @application.route('/api/v1/components/<component>/updates', methods=['POST'])
         @application.require_api_token
-        def put_component(component):
+        def post_component(component):
             data = flask.request.get_json()
             if not isinstance(data, dict):
                 return 'invalid request', 400
@@ -131,7 +137,7 @@ class Application(flask.Flask):
                 if not isinstance(data['tags'], dict):
                     return 'tags must be dictionary', 400
                 update.tags = json.dumps(data['tags'])
-            update.lifetime = int(data['lifetime']) if 'lifetime' in data else (5 * 60)
+            update.lifetime = float(data['lifetime']) if 'lifetime' in data else (5 * 60)
             if update.lifetime < 5 or update.lifetime > 24 * 60 * 60:
                 return 'lifetime must be between 5 seconds and 24 hours', 400
             db.session.add(update)

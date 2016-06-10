@@ -28,8 +28,9 @@ $(function() {
             var historyScale = 24 * 60 * 60;
             var uptime = 0;
             $.each(component.update_history, function(i, update) {
-                var start = Math.max(update.time, now - historyScale);
-                var end = Math.min(t, update.time + update.lifetime);
+                var time = new Date(update.time).getTime() / 1000;
+                var start = Math.max(time, now - historyScale);
+                var end = Math.min(t, time + update.lifetime);
                 if (start >= end) {
                     return;
                 }
@@ -43,10 +44,11 @@ $(function() {
                 $update.css('left', (start - now + historyScale) / historyScale * 100 + '%');
                 $update.css('background-color', colorForHealth(update.health, 0.5, 0.8));
                 $update.css('width', width + '%');
+                $update.css('z-index', 100 - update.health);
                 $history.append($update);
 
                 uptime += update.health / 100 * (end - start);
-                t = update.time;
+                t = time;
             });
             $row.append($history);
 

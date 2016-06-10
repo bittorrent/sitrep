@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 
-from sqlalchemy import Column, Integer, SmallInteger, String, Text
+from sqlalchemy import Column, Float, Integer, SmallInteger, String, Text
 
 
 class Database(SQLAlchemy):
@@ -16,7 +16,22 @@ class Database(SQLAlchemy):
             status_description = db.Column(db.Text())
             health = db.Column(db.SmallInteger())
             tags = db.Column(db.Text())
-            time = db.Column(db.Integer())
-            lifetime = db.Column(db.Integer())
+            time = db.Column(db.Float(precision=53))
+            lifetime = db.Column(db.Float(precision=53))
+
+            def roll_up(self, other):
+                for attribute in ['component', 'label', 'status', 'status_description', 'health', 'tags']:
+                    if getattr(self, attribute) != getattr(other, attribute):
+                        return False
+
+                first = self if self.id < other.id else other
+                second = other if self.id < other.id else self
+
+                if first.time + first.lifetime < second.time:
+                    return False
+
+                self.lifetime = second.time + second.lifetime - first.time
+                self.time = first.time
+                return True
 
         self.ComponentUpdate = ComponentUpdate
