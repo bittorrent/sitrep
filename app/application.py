@@ -141,8 +141,13 @@ class Application(flask.Flask):
             if update.lifetime < 5 or update.lifetime > 24 * 60 * 60:
                 return 'lifetime must be between 5 seconds and 24 hours', 400
             db.session.add(update)
-            db.session.query(table).filter(table.time + table.lifetime < time.time() - COMPONENT_UPDATE_HISTORY).delete()
             db.session.commit()
+            try:
+                db.session.query(table).filter(table.time + table.lifetime < time.time() - COMPONENT_UPDATE_HISTORY).delete()
+                db.session.commit()
+            except sqlalchemy.exc.OperationalError:
+                # innodb deadlock. this isn't critical - we'll just try again next time
+                pass
             return 'thanks' if update.health == 100 else 'get well soon'
 
         return application
