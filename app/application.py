@@ -19,6 +19,7 @@ class Application(flask.Flask):
         self.config['SQLALCHEMY_DATABASE_URI'] = settings['database']
         self.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
         self.database = Database(self)
+        self.last_component_update_purge = None
 
     def cache(self, seconds=60):
         def inner_decorator(f):
@@ -119,6 +120,8 @@ class Application(flask.Flask):
         @application.route('/api/v1/components/<component>/updates', methods=['POST'])
         @application.require_api_token
         def post_component(component):
+            now = time.time()
+
             data = flask.request.get_json()
             if not isinstance(data, dict):
                 return 'invalid request', 400
@@ -132,7 +135,7 @@ class Application(flask.Flask):
             update.health = int(data['health'])
             if update.health < 0 or update.health > 100:
                 return 'health must be between 0 and 100', 400
-            update.time = time.time()
+            update.time = now
             if 'tags' in data:
                 if not isinstance(data['tags'], dict):
                     return 'tags must be dictionary', 400
@@ -142,12 +145,16 @@ class Application(flask.Flask):
                 return 'lifetime must be between 5 seconds and 24 hours', 400
             db.session.add(update)
             db.session.commit()
-            try:
-                db.session.query(table).filter(table.time + table.lifetime < time.time() - COMPONENT_UPDATE_HISTORY).delete()
-                db.session.commit()
-            except sqlalchemy.exc.OperationalError:
-                # innodb deadlock. this isn't critical - we'll just try again next time
-                pass
+
+            if application.last_component_update_purge is None or abs(now - application.last_component_update_purge) > 60:
+                try:
+                    db.session.query(table).filter(table.time + table.lifetime < time.time() - COMPONENT_UPDATE_HISTORY).delete()
+                    db.session.commit()
+                    application.last_component_update_purge = now
+                except sqlalchemy.exc.OperationalError:
+                    # innodb deadlock. this isn't critical - we'll just try again next time
+                    pass
+
             return 'thanks' if update.health == 100 else 'get well soon'
 
         return application
