@@ -11,11 +11,24 @@
     <div class="components"></div>
 </div>
 
+<a name="charts" class="components-container">
+</a>
+
 <div id="other" style="display: none;">
     <h2>Other Components</h2>
     <hr />
     <div class="components"></div>
 </div>
 
+<template id="component-container-template">
+    <div class="component-container">
+        <div class="name"></div>
+        <div class="up-time"></div>
+        <div class="status"></div>
+        <div class="timeline"></div>
+    </div>
+</template>
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script src="{{ url_for('static', filename='index.js') }}"></script>
 {% include 'footer.html.jinja' %}
