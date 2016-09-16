@@ -12,7 +12,6 @@
 ROOT=$(dirname $(dirname $(readlink -f $0)))
 
 apt-get update
-apt-get --assume-yes install python-dev
 
 DEBIAN_FRONTEND=noninteractive apt-get install -yq mysql-server
 mysql -u root -e 'create database live_status'
