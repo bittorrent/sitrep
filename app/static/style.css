@@ -18,8 +18,26 @@ body * {
     font-size: 1.2em;
 }
 
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
 main {
     margin: 0 auto;
+}
+
+body > footer {
+    text-align: right;
+    font-size: 0.75em;
+    color: #c0c0c0;
+}
+
+body > footer a {
+    color: #b0b0b0;
 }
 
 hr {
