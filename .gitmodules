@@ -1,3 +1,0 @@
-[submodule "salt/formulas/nginx"]
-	path = salt/formulas/nginx
-	url = git@github.com:saltstack-formulas/nginx-formula.git

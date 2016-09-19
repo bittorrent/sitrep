@@ -21,6 +21,11 @@ class Application(flask.Flask):
         self.database = Database(self)
         self.last_component_update_purge = None
 
+    def select_jinja_autoescape(self, filename):
+        return filename is not None and (
+            filename.endswith('.html.jinja') or flask.Flask.select_jinja_autoescape(self, filename)
+        )
+
     def cache(self, seconds=60):
         def inner_decorator(f):
             @wraps(f)
@@ -38,7 +43,7 @@ class Application(flask.Flask):
     def require_api_token(self, f):
         @wraps(f)
         def wrapper(*args, **kwds):
-            token = flask.request.headers.get('X-Live-Status-API-Token')
+            token = flask.request.headers.get('X-Status-API-Token', flask.request.headers.get('X-Live-Status-API-Token'))
             if token != self.settings['api_token']:
                 resp = flask.make_response(flask.jsonify({}), 403)
             else:
@@ -53,16 +58,22 @@ class Application(flask.Flask):
 
     @staticmethod
     def environment_settings():
-        if 'LIVE_STATUS_SETTINGS' not in os.environ:
-            raise RuntimeError('settings must be provided via LIVE_STATUS_SETTINGS')
+        if 'STATUS_SETTINGS' not in os.environ:
+            raise RuntimeError('settings must be provided via STATUS_SETTINGS')
 
-        with open(os.environ['LIVE_STATUS_SETTINGS'], 'r') as f:
+        with open(os.environ['STATUS_SETTINGS'], 'r') as f:
             return json.load(f)
 
     @staticmethod
     def create(settings):
         application = Application(settings)
         db = application.database
+
+        @application.context_processor
+        def inject_globals():
+            return {
+                'display_settings': settings.get('display')
+            }
 
         @application.url_defaults
         def hashed_url_for_static_file(endpoint, values):

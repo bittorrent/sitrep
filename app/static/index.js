@@ -44,6 +44,7 @@ function getComponentData(component) {
     var timelineData = [];
     var timelineColors = [];
     var uptime = 0;
+
     for(var i = 0; i < updateHistory.length; i++) {
         var update = updateHistory[i];
         var time = new Date(update.time).getTime() / 1000;
@@ -61,14 +62,40 @@ function getComponentData(component) {
         uptime += update.health / 100 * (end - start);
         t = time;
     }
-    var upTime = ((uptime / historyScale) * 100).toFixed(5);
 
-    return {name: component.label, status: component.status, timelineData: timelineData, timelineColors: timelineColors, upTime: ((uptime / historyScale) * 100).toFixed(6) + '%'};
+    return {
+        name: component.label,
+        status: component.status,
+        timelineData: timelineData,
+        timelineColors: timelineColors,
+        uptime: ((uptime / historyScale) * 100).toFixed(6) + '%',
+        tags: component.tags
+    };
 }
 
 function populateComponent(data) {
-    var $componentContainer = $($('#component-container-template').html()).appendTo('.components-container');
-    var chart = new google.visualization.Timeline($componentContainer.find('.timeline').get(0));
+    var $group = null;
+    $('.component-group').each(function() {
+        if (!$(this).data('tags')) { return; }
+        var tags = $(this).data('tags');
+        var match = true;
+        for (var key in tags) {
+            if (data.tags[key] != tags[key]) {
+                match = false;
+            }
+        }
+        if (match) {
+            $group = $(this);
+        }
+    });
+    if (!$group) {
+        $group = $('#other-components');
+    }
+    var $container = $group.children('.component-container');
+    $group.show();
+
+    var $component = $($('#component-template').html()).appendTo($container);
+    var chart = new google.visualization.Timeline($component.find('.timeline').get(0));
     var dataTable = new google.visualization.DataTable();
 
     dataTable.addColumn({
@@ -99,29 +126,42 @@ function populateComponent(data) {
         colors: data.timelineColors
     };
 
-    $componentContainer.find('.name').text(data.name);
-    $componentContainer.find('.up-time').text(data.upTime);
-    $componentContainer.find('.status').text(data.status).addClass(data.status == 'stream error' ? 'error' : '');
+    $component.find('.name').text(data.name);
+    $component.find('.up-time').text('12H: ' + data.uptime);
+    $component.find('.status').text(data.status).addClass(data.status == 'stream error' ? 'error' : '');
 
-    $componentContainer.on('resized', function() {
+    $component.on('resized', function() {
         chart.draw(dataTable, options);
     });
 
-    $componentContainer.trigger('resized');
+    $component.trigger('resized');
 }
 
-$(function(){
+function checkHash() {
+    if (window.location.hash == '#compact') {
+        $('body').addClass('compact');
+    } else {
+        $('body').removeClass('compact');
+    }
+}
+
+$(function() {
+    checkHash();
+    $(window).on('hashchange', function() {
+        checkHash();
+    });
+
     google.charts.load("current", {
         packages: ["timeline"]
     });
     google.charts.setOnLoadCallback(init);
 
     $(window).resize(function () {
-        if($('.components-container').data('width') != $('.components-container').width() && !$('.components-container').data('resizing')) {
-            $('.components-container').data('resizing', true);
-            $('.components-container').data('width', $('.components-container').width());
-            $('.components-container .component-container').trigger('resized');
-            $('.components-container').data('resizing', false);
+        if($('.component-container').data('width') != $('.component-container').width() && !$('.component-container').data('resizing')) {
+            $('.component-container').data('resizing', true);
+            $('.component-container').data('width', $('.component-container').width());
+            $('.component-container .component').trigger('resized');
+            $('.component-container').data('resizing', false);
         }
     });
 });

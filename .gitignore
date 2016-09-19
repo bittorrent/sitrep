@@ -1,4 +1,3 @@
 .DS_Store
 *.pyc
-.vagrant/
-salt/pillar/live-status.sls
+/config
