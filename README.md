@@ -1,7 +1,7 @@
-status-server
+Sitrep
 ==
 
-This server receives status reports from infrastructure components, and presents them in an informative dashboard.
+Sitrep receives status reports from infrastructure components, and presents them in an informative dashboard.
 
 Prerequisites
 --
