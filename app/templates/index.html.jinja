@@ -1,21 +1,42 @@
 {% include 'header.html.jinja' %}
-<h1>Live System Status</h1>
-<hr />
-<p>This is the public dashboard for the overall health of our systems, intended to increase transparency and awareness when things aren't going well.</p>
-<p>If you experience a service issue that isn't being reported here, please <a href="http://support.btlive.tv/customer/portal/emails/new">contact us</a>.</p>
 
-<div id="swarm-servers" style="display: none;">
-    <h2>Swarm Servers</h2>
+<header class="non-compact">
+    <h1>{{ display_settings.title|default('System Status') }}</h1>
     <hr />
-    <p>Each channel has a corresponding swarm server. Streams are routed to these from our ingest points, transcoded, then made available to the peer-to-peer swarm.</p>
-    <div class="components"></div>
+
+    {% for paragraph in display_settings.header_paragraphs %}
+    <p>{{ paragraph|safe }}</p>
+    {% endfor %}
+</header>
+
+{% for group in display_settings.component_groups %}
+<div class="component-group" data-tags="{{ group.tags|tojson|forceescape }}">
+    <h2>{{ group.title }}</h2>
+    <hr />
+    <p class="non-compact">{{ group.description|safe }}</p>
+    <div class="component-container"></div>
+</div>
+{% endfor %}
+
+<div id="other-components" class="component-group" style="display: none;">
+    <h2>{{ 'Other ' if display_settings.component_groups else '' }}Components</h2>
+    <hr />
+    <div class="component-container"></div>
 </div>
 
-<div id="other" style="display: none;">
-    <h2>Other Components</h2>
-    <hr />
-    <div class="components"></div>
-</div>
+<template id="component-template">
+    <div class="component">
+        <div class="name"></div>
+        <div class="up-time"></div>
+        <div class="status"></div>
+        <div class="timeline"></div>
+    </div>
+</template>
 
+<footer class="non-compact">
+    <p><small><a href="#compact">Compact View</a></small></p>
+</footer>
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script src="{{ url_for('static', filename='index.js') }}"></script>
 {% include 'footer.html.jinja' %}

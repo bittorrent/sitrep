@@ -1,9 +1,9 @@
-language: generic
+language: python
 sudo: required
-dist: trusty
+services:
+    - docker
 install:
-    - sudo ./scripts/install-dev-environment.sh
-    - sudo chown -R $USER .
-    - sudo chgrp -R live-status ~ .
+    - pip install -r requirements-dev.txt
 script:
-    /opt/live-status-website/bin/nosetests
+    - docker build -t status-website .
+    - nosetests

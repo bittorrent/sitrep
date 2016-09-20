@@ -1,0 +1,5 @@
+*
+!docker/**
+!app/**
+!migrations/**
+!requirements.txt

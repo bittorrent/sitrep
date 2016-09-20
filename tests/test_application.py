@@ -28,7 +28,7 @@ class ApplicationTest(TestCase):
 
     def test_component_update(self):
         response = self.client.post('/api/v1/components/test/updates', headers={
-            'X-Live-Status-API-Token': 'test-token'
+            'X-Status-API-Token': 'test-token'
         }, data=json.dumps({
             'label': 'test component',
             'health': 60,
@@ -52,7 +52,7 @@ class ApplicationTest(TestCase):
         self.assertEqual(component['tags'], {'test': 1})
 
         response = self.client.post('/api/v1/components/test/updates', headers={
-            'X-Live-Status-API-Token': 'test-token'
+            'X-Status-API-Token': 'test-token'
         }, data=json.dumps({
             'label': 'test component',
             'health': 100,
@@ -74,7 +74,7 @@ class ApplicationTest(TestCase):
 
     def test_component_update_rollup(self):
         response = self.client.post('/api/v1/components/rollup-test/updates', headers={
-            'X-Live-Status-API-Token': 'test-token'
+            'X-Status-API-Token': 'test-token'
         }, data=json.dumps({
             'label': 'test component',
             'health': 100,
@@ -90,7 +90,7 @@ class ApplicationTest(TestCase):
         self.assertEqual(components['rollup-test']['update_history'][0]['lifetime'], 60)
 
         response = self.client.post('/api/v1/components/rollup-test/updates', headers={
-            'X-Live-Status-API-Token': 'test-token'
+            'X-Status-API-Token': 'test-token'
         }, data=json.dumps({
             'label': 'test component',
             'health': 100,
