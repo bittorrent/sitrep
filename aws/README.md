@@ -4,7 +4,7 @@ Deploying to AWS
 A stack is provided to simplify the creation of a robust, yet cost-effective, multi-AZ deployment.
 
 
-* Initialize a new CloudFormation stack using cluster.template. Keep the service offline for now.
+* Initialize a new CloudFormation stack using *cluster.template*. Keep the service offline for now.
 
   The stack will create the following:
 
@@ -25,7 +25,7 @@ A stack is provided to simplify the creation of a robust, yet cost-effective, mu
   The creation of these resources will take a while (up to an hour, because CloudFront and RDS are slow).
 
 
-* Write your configuration to a file named *config/settings.json* on the EFS volume. Currently, the easiest way to do this is to SSH into an instance and mount the volume. We'll make improve on this part of the process in the future if Amazon doesn't.
+* Write your configuration to a file named *config/settings.json* on the EFS volume. Currently, the easiest way to do this is to SSH into an instance and mount the volume. We'll improve on this part of the process in the future if Amazon doesn't.
 
 
 * Ensure that your database schema is up-to-date by running the required migrations.
@@ -35,9 +35,9 @@ A stack is provided to simplify the creation of a robust, yet cost-effective, mu
 
 * Whitelist CloudFront's IP addresses.
 
-  * The stack creates a *SecurityGroupUpdateFunction* resource that keeps the load balancer's security group up-to-date. You'll need to manually run it once, after initializing the stack, but after that, it will automatically execute when needed. To manually run it, you can use any test data (i.e. the default Hello World data is fine).
+  * The stack creates a *SecurityGroupUpdateFunction* resource that keeps the load balancer's security group up-to-date. You'll need to manually run it once when you initialize the stack, but after that, it will automatically execute when needed. To manually run it, you can use any test data (The default Hello World data is fine.).
 
 
-* Edit the stack to bring the service online.
+* Update the stack to bring the service online.
 
   * Just switch the *ServiceState* parameter to *Online*.
