@@ -157,7 +157,7 @@ $(function() {
     google.charts.setOnLoadCallback(init);
 
     $(window).resize(function () {
-        if($('.component-container').data('width') != $('.component-container').width() && !$('.component-container').data('resizing')) {
+        if ($('.component-container').data('width') != $('.component-container').width() && !$('.component-container').data('resizing')) {
             $('.component-container').data('resizing', true);
             $('.component-container').data('width', $('.component-container').width());
             $('.component-container .component').trigger('resized');
