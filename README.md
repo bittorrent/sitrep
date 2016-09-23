@@ -2,12 +2,6 @@ Sitrep [![Build Status](https://travis-ci.org/bittorrent/sitrep.svg?branch=maste
 ==
 
 Sitrep receives status reports from infrastructure components, and presents them in an informative dashboard.
-Setting up
---
-From the directory of your cloned repo, run command:
-```
-git submodule update --init --recursive
-```
 
 Configuration
 --
