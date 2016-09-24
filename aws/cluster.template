@@ -782,7 +782,10 @@
           "y": 80
         },
         "z": 0,
-        "embeds": []
+        "embeds": [],
+        "isrelatedto": [
+          "233eba05-2238-45a8-921e-a1bace3b44b2"
+        ]
       },
       "465748c9-3605-490a-bd82-0d029950d7bf": {
         "size": {
@@ -1444,7 +1447,16 @@
     },
     "FileSystem": {
       "Type": "AWS::EFS::FileSystem",
-      "Properties": {},
+      "Properties": {
+        "FileSystemTags": [
+          {
+            "Key": "Name",
+            "Value": {
+              "Ref": "AWS::StackName"
+            }
+          }
+        ]
+      },
       "Metadata": {
         "AWS::CloudFormation::Designer": {
           "id": "1146a4cd-c29e-46c9-862b-4e550cf8ab8b"
