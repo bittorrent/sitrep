@@ -13,7 +13,7 @@ For a minimal configuration, you just need two keys:
 ```
 {
     "api_token": "yMhyfJoNI2fTyp3rStK1A0B6u8ZhMJUJ60M3y0qB",
-    "database": "mysql://root@10.0.1.10/status_server"
+    "database": "mysql://<user>@<your_ip_address>/status_server"
 }
 ```
 
@@ -62,6 +62,8 @@ Once the database is up-to-date, you can start the application like this:
 
 The docker image uses [NGINX](https://www.nginx.com/) and [Gunicorn](http://gunicorn.org/), so you may want to review the options available for them. For example, the `WEB_CONCURRENCY` environment variable sets the number of Gunicorn worker processes to create.
 
+If you installed MYSQL through homebrew there may be some configuration settings that stop you from connecting to the database. Make sure you give your database user permission to connect from your machine.
+
 API
 --
 
@@ -80,3 +82,7 @@ Deployment
 --
 
 If you're deploying to AWS, see the *aws* directory for a CloudFormation stack that can get you started quickly. Otherwise, you can deploy with your mechanism of choice for Docker or Flask applications.
+
+
+
+

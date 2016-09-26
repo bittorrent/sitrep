@@ -28,12 +28,16 @@ function HSLToRGB(h, s, l) {
 }
 
 function init() {
-    $.get('/api/v1/components', function(data) {
-        $.each(data.components, function(id, component) {
-            componentData = getComponentData(component);
-            populateComponent(componentData);
-        });
-    });
+   $.get('/api/v1/components', function(data) {
+       var components = [];
+       $.each(data.components, function(id, component) {
+           components.push(getComponentData(component));
+       });
+       components.sort(function(a, b) { return a.name.localeCompare(b.name); });
+       $.each(components, function(id, component){
+            populateComponent(component);
+       });
+   });
 }
 
 function getComponentData(component) {
