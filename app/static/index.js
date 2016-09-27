@@ -42,9 +42,18 @@ function init() {
 
 function getComponentData(component) {
     var updateHistory = component.update_history;
+
+    var birth = new Date(updateHistory[0].time);
+    updateHistory.forEach( function(update){ 
+        if (new Date(update.time) < birth) {
+            birth = new Date(update.time);
+        } 
+    });
+
     var now = Math.floor(Date.now() / 1000);
-    var t = now;
     var historyScale = 12 * 60 * 60;
+    birth /= 1000;
+    var timeBeingConsidered = now - Math.max(birth, now - historyScale);
     var timelineData = [];
     var timelineColors = [];
     var uptime = 0;
@@ -53,26 +62,27 @@ function getComponentData(component) {
         var update = updateHistory[i];
         var time = new Date(update.time).getTime() / 1000;
         var start = Math.max(time, now - historyScale);
-        var end = Math.min(t, time + update.lifetime);
+        var end = Math.min(now, time + update.lifetime);
         if (start >= end) {
             break;
         }
 
         var status = update.status_description ? update.status_description : (update.health == 100 ? 'Healthy.' : 'Unhealthy.');
         var data = [update.label, status, new Date(start * 1000), new Date(end * 1000)];
-
         timelineData.unshift(data);
         timelineColors.unshift(colorForHealth(update.health, 0.5, 0.8));
         uptime += update.health / 100 * (end - start);
-        t = time;
     }
+
+    var padding = [data[0], data[1], new Date(now*1000), new Date(now*1000+1)]
+    timelineData.unshift(padding);
 
     return {
         name: component.label,
         status: component.status,
         timelineData: timelineData,
         timelineColors: timelineColors,
-        uptime: ((uptime / historyScale) * 100).toFixed(6) + '%',
+        uptime: ((uptime / timeBeingConsidered) * 100).toFixed(6) + '%',
         tags: component.tags
     };
 }
