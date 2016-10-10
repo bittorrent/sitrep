@@ -78,6 +78,12 @@ Make sure you have `pip`, and run `pip install -r requirements-dev.txt`. Then yo
 
 `STATUS_SETTINGS=config/settings.json python -m app runserver --debug`
 
+You can also run a seed command to pre-populate the database with filler data like this:
+`python -m app seed-db`
+
+The seed file itself is located in:
+`app/dev/seed.py`
+
 Deployment
 --
 
