@@ -45,6 +45,10 @@ hr {
     border-bottom: 1px solid #ccc;
 }
 
+rect {
+  stroke-width: 0;
+}
+
 .google-visualization-tooltip {
     z-index: 100;
 }
