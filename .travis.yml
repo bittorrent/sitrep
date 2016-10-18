@@ -3,7 +3,10 @@ sudo: required
 services:
     - docker
 install:
+    - curl -L https://github.com/codeclimate/codeclimate/archive/master.tar.gz | tar xvz -C /tmp
+    - sh -c 'cd /tmp/codeclimate-* && make install'
     - pip install -r requirements-dev.txt
 script:
     - docker build -t status-website .
     - nosetests
+    - OUTPUT=$(codeclimate analyze | tee /dev/tty) && (echo $OUTPUT | grep -q '[1-9][0-9]* issues') && echo 'Please fix the above issues before continuing!' && exit 1

@@ -30,7 +30,7 @@ function HSLToRGB(h, s, l) {
 /**
 * @param {number} secs Number of seconds
 * @return {string} Integer number of the largest unit of time that
-*     can be made from secs suffixed with the first letter of that unit 
+*     can be made from secs suffixed with the first letter of that unit
 * Example:
 *  @param {572}
 *  @return {'9M'}
@@ -49,7 +49,7 @@ function formatDuration(secs) {
     } else {
         seconds += 'S';
         return seconds;
-    }   
+    }
 }
 
 /**
@@ -58,7 +58,7 @@ function formatDuration(secs) {
 *     <string time, date>
 *   } update Object containg start-time and duration info about the update
 * @return {object.
-*     <string s, number> Number of seconds representing the start of update interval, 
+*     <string s, number> Number of seconds representing the start of update interval,
 *     <string e, number> Number of seconds representing the end of update interval
 *   } Object containing the start and end-time number of seconds of an update interval
 */
@@ -72,18 +72,18 @@ function getUpdateInterval(update) {
 *     <string status> Status of an update,
 *     <date start> Start time of an update interbval,
 *     <date end> End time of an update interval
-*   } data Array containing the label, status, start and end-time number of seconds of an 
+*   } data Array containing the label, status, start and end-time number of seconds of an
 *        update interval
 * @return {array.
 *     <string label>,
 *     <string tooltip>,
 *     <string status>,
 *     <date start>,
-*     <date end>    
+*     <date end>
 *   } Array containing the label, status, tooltip-html, start and end-time number of seconds of an
 *        update interval
 */
-var setTooltip = (function(){ 
+var setTooltip = (function(){
     var dateFormat = new google.visualization.DateFormat({
           pattern: 'h:mm:ss.SSS aa'
     });
@@ -146,7 +146,7 @@ function getComponentData(component) {
 
             end = (updateHistory.length === 1 ? (new Date(updateHistory[i].time).getTime() / 1000) + updateHistory[i].lifetime : second.e );
             end = Math.min(end, now);
-  
+
             if (end < now - historyScale) {
                 break;
             }
@@ -164,7 +164,7 @@ function getComponentData(component) {
 
         first = getUpdateInterval(updateHistory[i]);
         second = getUpdateInterval(updateHistory[i-1]);
-        
+
         start = Math.max(first.s, now - historyScale);
         start = Math.min(now, start);
         end = Math.min(first.e, second.s, now);
@@ -207,7 +207,7 @@ function populateComponent(data) {
         var tags = $(this).data('tags');
         var match = true;
         for (var key in tags) {
-            if (data.tags[key] != tags[key]) {
+            if (data.tags[key] !== tags[key]) {
                 match = false;
             }
         }
@@ -254,7 +254,7 @@ function populateComponent(data) {
         timeline: {
             groupByRowLabel: true,
             showBarLabels: false,
-            showRowLabels: false,
+            showRowLabels: false
         },
         avoidOverlappingGridLines: false,
         colors: data.timelineColors,
@@ -265,7 +265,7 @@ function populateComponent(data) {
 
     $component.find('.name').text(data.name);
     $component.find('.up-time').text(formatDuration(data.timeBeingConsidered) + ': ' + data.uptime);
-    $component.find('.status').text(data.status).addClass(data.status == 'stream error' ? 'error' : '');
+    $component.find('.status').text(data.status).addClass(data.status === 'stream error' ? 'error' : '');
 
     $component.on('resized', function() {
         chart.draw(dataTable, options);
@@ -275,7 +275,7 @@ function populateComponent(data) {
 }
 
 function checkHash() {
-    if (window.location.hash == '#compact') {
+    if (window.location.hash === '#compact') {
         $('body').addClass('compact');
     } else {
         $('body').removeClass('compact');
@@ -294,7 +294,7 @@ $(function() {
     google.charts.setOnLoadCallback(init);
 
     $(window).resize(function () {
-        if ($('.component-container').data('width') != $('.component-container').width() && !$('.component-container').data('resizing')) {
+        if ($('.component-container').data('width') !== $('.component-container').width() && !$('.component-container').data('resizing')) {
             $('.component-container').data('resizing', true);
             $('.component-container').data('width', $('.component-container').width());
             $('.component-container .component').trigger('resized');
