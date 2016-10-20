@@ -45,6 +45,10 @@ hr {
     border-bottom: 1px solid #ccc;
 }
 
+rect {
+  stroke-width: 0;
+}
+
 .google-visualization-tooltip {
     z-index: 100;
 }
@@ -109,6 +113,21 @@ hr {
     content: '';
     display: block;
     clear: both;
+}
+
+.ggl-tooltip {
+    border: 1px solid #E0E0E0;
+    font-family: Arial, Helvetica;
+    font-size: 10pt;
+    padding: 12px 12px 12px 12px;
+}
+
+.ggl-tooltip div {
+    padding: 6px 6px 6px 6px;
+}
+
+.ggl-tooltip span {
+    font-weight: bold;
 }
 
 @media (min-width: 800px) {
