@@ -155,7 +155,7 @@ function getComponentData(component) {
                 timelineColors.push(colorForHealth(updateHistory[i].health, 0.5, 0.8));
                 statusSeen[status] = true;
             }
-            data = [updateHistory[i].label, status, new Date(start*1000), new Date(end*1000)];
+            data = [component.label, status, new Date(start*1000), new Date(end*1000)];
             data = setTooltip(data);
             timelineData.push(data);
             uptime += (end - start) * (updateHistory[i].health / 100);
@@ -169,7 +169,7 @@ function getComponentData(component) {
         start = Math.min(now, start);
         end = Math.min(first.e, second.s, now);
 
-        data = [updateHistory[i].label, status, new Date(start*1000), new Date(end*1000)];
+        data = [component.label, status, new Date(start*1000), new Date(end*1000)];
         data = setTooltip(data);
 
         if (end < now - historyScale) {
