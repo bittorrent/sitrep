@@ -125,6 +125,7 @@ function init() {
 
 function getComponentData(component) {
     var updateHistory = component.update_history;
+    var label = component.label;
     var birth = new Date(updateHistory[updateHistory.length-1].time).getTime() / 1000;
     var now = Date.now() / 1000;
     var historyScale = 12 * 60 * 60;
@@ -136,7 +137,6 @@ function getComponentData(component) {
     var first,second,data,start,end,status;
 
     for (var i = updateHistory.length-1; i >= 0; i--) {
-        now = Date.now() / 1000;
         status = updateHistory[i].health + '% Health' + (updateHistory[i].status_description ? ': ' + updateHistory[i].status_description : '.');
 
         if (i === 0) {
@@ -155,21 +155,15 @@ function getComponentData(component) {
                 timelineColors.push(colorForHealth(updateHistory[i].health, 0.5, 0.8));
                 statusSeen[status] = true;
             }
-            data = [component.label, status, new Date(start*1000), new Date(end*1000)];
-            data = setTooltip(data);
-            timelineData.push(data);
-            uptime += (end - start) * (updateHistory[i].health / 100);
-            break;
+        } else {
+            first = getUpdateInterval(updateHistory[i]);
+            second = getUpdateInterval(updateHistory[i-1]);
+
+            start = Math.max(first.s, now - historyScale);
+            start = Math.min(now, start);
+            end = Math.min(first.e, second.s, now);
         }
-
-        first = getUpdateInterval(updateHistory[i]);
-        second = getUpdateInterval(updateHistory[i-1]);
-
-        start = Math.max(first.s, now - historyScale);
-        start = Math.min(now, start);
-        end = Math.min(first.e, second.s, now);
-
-        data = [component.label, status, new Date(start*1000), new Date(end*1000)];
+        data = [label, status, new Date(start*1000), new Date(end*1000)];
         data = setTooltip(data);
 
         if (end < now - historyScale) {
