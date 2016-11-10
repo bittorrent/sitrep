@@ -130,6 +130,10 @@ rect {
     font-weight: bold;
 }
 
+.google-visualization-tooltip {
+    margin-top: 15px;
+}
+
 @media (min-width: 800px) {
     .component {
         width: calc(33.3% - 13px);
