@@ -90,11 +90,17 @@ You can also run a seed command to pre-populate the database with filler data li
 The seed file itself is located in:
 `app/dev/seed.py`
 
+Code Climate
+--
+
+Installation (make sure you have docker installed):
+`curl -L https://github.com/codeclimate/codeclimate/archive/master.tar.gz | tar xvz -C /tmp`
+`sh -c 'cd /tmp/codeclimate-* && make install'`
+
+Now you can run Code Climate with the following command:
+`codeclimate analyze`
+
 Deployment
 --
 
 If you're deploying to AWS, see the *aws* directory for a CloudFormation stack that can get you started quickly. Otherwise, you can deploy with your mechanism of choice for Docker or Flask applications.
-
-
-
-

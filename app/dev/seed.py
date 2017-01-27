@@ -3,6 +3,7 @@ import time
 import datetime
 import flask
 
+
 class Seed(Command):
 
     def saveData(self, data, custom_time_stamp):
@@ -32,7 +33,7 @@ class Seed(Command):
             }
 
             time_stamp = time.time()
-            self.saveData(data,time_stamp)
+            self.saveData(data, time_stamp)
 
             data = {
                 'label': component_name,
