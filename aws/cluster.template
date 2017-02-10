@@ -760,18 +760,6 @@
         },
         "z": 11
       },
-      "aa760129-7d03-480f-b53e-6dfa290c5e95": {
-        "size": {
-          "width": 60,
-          "height": 60
-        },
-        "position": {
-          "x": 400,
-          "y": 80
-        },
-        "z": 0,
-        "embeds": []
-      },
       "da8dbba7-76a9-40a4-9d39-d8ec79011a3b": {
         "size": {
           "width": 60,
@@ -785,25 +773,6 @@
         "embeds": [],
         "isrelatedto": [
           "233eba05-2238-45a8-921e-a1bace3b44b2"
-        ]
-      },
-      "465748c9-3605-490a-bd82-0d029950d7bf": {
-        "size": {
-          "width": 60,
-          "height": 60
-        },
-        "position": {
-          "x": 500,
-          "y": 160
-        },
-        "z": 0,
-        "embeds": [],
-        "dependson": [
-          "44475b42-d6a5-43db-88d9-c105c9383153"
-        ],
-        "isrelatedto": [
-          "bb53b812-3d3b-49c3-9ce1-351b03eaf0e7",
-          "4ae53777-1583-4e14-9b1c-bb9a02172a2f"
         ]
       },
       "4ae53777-1583-4e14-9b1c-bb9a02172a2f": {
@@ -837,24 +806,36 @@
           "4ae53777-1583-4e14-9b1c-bb9a02172a2f"
         ]
       },
-      "bb53b812-3d3b-49c3-9ce1-351b03eaf0e7": {
+      "0d4f8d2d-56f7-4396-8604-34f7de8ceebf": {
+        "source": {
+          "id": "465748c9-3605-490a-bd82-0d029950d7bf"
+        },
+        "target": {
+          "id": "44475b42-d6a5-43db-88d9-c105c9383153"
+        },
+        "z": 11
+      },
+      "10f8738b-444a-42ae-b554-2fff74aeca0d": {
         "size": {
           "width": 60,
           "height": 60
         },
         "position": {
-          "x": 400,
+          "x": 480,
           "y": 160
         },
         "z": 0,
         "embeds": [],
+        "dependson": [
+          "44475b42-d6a5-43db-88d9-c105c9383153"
+        ],
         "isrelatedto": [
-          "aa760129-7d03-480f-b53e-6dfa290c5e95"
+          "4ae53777-1583-4e14-9b1c-bb9a02172a2f"
         ]
       },
-      "0d4f8d2d-56f7-4396-8604-34f7de8ceebf": {
+      "38022eb8-4f68-46ed-8d7b-21cdc339e154": {
         "source": {
-          "id": "465748c9-3605-490a-bd82-0d029950d7bf"
+          "id": "10f8738b-444a-42ae-b554-2fff74aeca0d"
         },
         "target": {
           "id": "44475b42-d6a5-43db-88d9-c105c9383153"
@@ -1808,150 +1789,6 @@
         "LoadBalancer"
       ]
     },
-    "TopicSubscriptionServiceRole": {
-      "Type": "AWS::IAM::Role",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Version": "2012-10-17",
-          "Statement": [
-            {
-              "Effect": "Allow",
-              "Principal": {
-                "Service": [
-                  "lambda.amazonaws.com"
-                ]
-              },
-              "Action": [
-                "sts:AssumeRole"
-              ]
-            }
-          ]
-        },
-        "Path": "/",
-        "ManagedPolicyArns": [
-          "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-        ],
-        "Policies": [
-          {
-            "PolicyName": "sns-subscription",
-            "PolicyDocument": {
-              "Version": "2012-10-17",
-              "Statement": [
-                {
-                  "Effect": "Allow",
-                  "Action": [
-                    "sns:Subscribe",
-                    "sns:Unsubscribe"
-                  ],
-                  "Resource": "arn:aws:sns:us-east-1:806199016981:AmazonIpSpaceChanged"
-                }
-              ]
-            }
-          }
-        ]
-      },
-      "Metadata": {
-        "AWS::CloudFormation::Designer": {
-          "id": "aa760129-7d03-480f-b53e-6dfa290c5e95"
-        }
-      }
-    },
-    "TopicSubscriptionService": {
-      "Type": "AWS::Lambda::Function",
-      "Properties": {
-        "Handler": "index.handler",
-        "Role": {
-          "Fn::GetAtt": [
-            "TopicSubscriptionServiceRole",
-            "Arn"
-          ]
-        },
-        "Code": {
-          "ZipFile": {
-            "Fn::Join": [
-              "\n",
-              [
-                "var response = require('cfn-response');",
-                "exports.handler = function(event, context) {",
-                "  console.log('REQUEST RECEIVED:\\n', JSON.stringify(event));",
-                "  var responseData = {};",
-                "  if (event.RequestType == 'Delete') {",
-                "    var subscriptionArn = event.PhysicalResourceId;",
-                "    var aws = require('aws-sdk');",
-                "    var sns = new aws.SNS();",
-                "    sns.unsubscribe({SubscriptionArn: subscriptionArn}, function(err, data) {",
-                "      if (err) {",
-                "          responseData = {Error: 'Failed to unsubscribe from SNS Topic'};",
-                "          response.send(event, context, response.FAILED, responseData);",
-                "      } else {",
-                "          response.send(event, context, response.SUCCESS, data, data.SubscriptionArn);",
-                "      }",
-                "    });",
-                "    return;",
-                "  }",
-                "  if (event.RequestType == 'Create' || event.RequestType == 'Update') {",
-                "    var topicArn = event.ResourceProperties.TopicArn;",
-                "    var endpoint = event.ResourceProperties.Endpoint;",
-                "    var protocol = event.ResourceProperties.Protocol;",
-                "    if (topicArn && endpoint && protocol) {",
-                "      var aws = require('aws-sdk');",
-                "      var sns = new aws.SNS();",
-                "      sns.subscribe({TopicArn: topicArn, Endpoint: endpoint, Protocol: protocol}, function(err, data) {",
-                "        if (err) {",
-                "          responseData = {Error: 'Failed to subscribe to SNS Topic'};",
-                "          console.log(responseData.Error + ':\\n', err);",
-                "          response.send(event, context, response.FAILED, responseData);",
-                "        } else {",
-                "          response.send(event, context, response.SUCCESS, data, data.SubscriptionArn);",
-                "        }",
-                "      });",
-                "    } else {",
-                "      responseData = {Error: 'Missing one of required arguments'};",
-                "      console.log(responseData.Error);",
-                "      response.send(event, context, response.FAILED, responseData);",
-                "    }",
-                "  }",
-                "};"
-              ]
-            ]
-          }
-        },
-        "Runtime": "nodejs",
-        "Timeout": "30"
-      },
-      "Metadata": {
-        "AWS::CloudFormation::Designer": {
-          "id": "bb53b812-3d3b-49c3-9ce1-351b03eaf0e7"
-        }
-      }
-    },
-    "CloudFrontIpSpaceTopicSubscription": {
-      "Type": "AWS::CloudFormation::CustomResource",
-      "Properties": {
-        "ServiceToken": {
-          "Fn::GetAtt": [
-            "TopicSubscriptionService",
-            "Arn"
-          ]
-        },
-        "TopicArn": "arn:aws:sns:us-east-1:806199016981:AmazonIpSpaceChanged",
-        "Protocol": "lambda",
-        "Endpoint": {
-          "Fn::GetAtt": [
-            "SecurityGroupUpdateFunction",
-            "Arn"
-          ]
-        }
-      },
-      "Metadata": {
-        "AWS::CloudFormation::Designer": {
-          "id": "465748c9-3605-490a-bd82-0d029950d7bf"
-        }
-      },
-      "DependsOn": [
-        "SecurityGroupUpdateFunctionPermission"
-      ]
-    },
     "SecurityGroupUpdateFunction": {
       "Type": "AWS::Lambda::Function",
       "Properties": {
@@ -2088,7 +1925,7 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs",
+        "Runtime": "nodejs4.3",
         "Timeout": 60
       },
       "Metadata": {
@@ -2187,6 +2024,27 @@
           "id": "44475b42-d6a5-43db-88d9-c105c9383153"
         }
       }
+    },
+    "CloudFrontIpSpaceSubscription": {
+      "Type": "AWS::SNS::Subscription",
+      "Properties": {
+        "TopicArn": "arn:aws:sns:us-east-1:806199016981:AmazonIpSpaceChanged",
+        "Protocol": "lambda",
+        "Endpoint": {
+          "Fn::GetAtt": [
+            "SecurityGroupUpdateFunction",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "AWS::CloudFormation::Designer": {
+          "id": "10f8738b-444a-42ae-b554-2fff74aeca0d"
+        }
+      },
+      "DependsOn": [
+        "SecurityGroupUpdateFunctionPermission"
+      ]
     }
   },
   "Mappings": {
